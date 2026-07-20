@@ -160,9 +160,18 @@ export class SourceFileLists extends BasePage {
   }
 
   async selectFundCheckbox(fundType: string) {
+  if (fundType === "ALL") {
+    const fundsToSelect = ["PFLT", "PCOF"];
+    for (const fund of fundsToSelect) {
+      const checkbox = this.page.locator(`//span[text()='${fund}']/preceding-sibling::span[contains(@class,'ant-checkbox')]`);
+      await checkbox.click();
+    }
+  } else {
     const checkbox = this.page.locator(`//span[text()='${fundType}']/preceding-sibling::span[contains(@class,'ant-checkbox')]`);
     await checkbox.click();
   }
+}
+
 
   // Simplified file upload logic replacing AWT Robot with fileChooser
   async handleFileUpload(originalEnvKey: string, newFileNameBase: string): Promise<string> {
@@ -226,7 +235,7 @@ export class SourceFileLists extends BasePage {
   async getUploadFileStatus(fileName: string): Promise<boolean> {
     const fileLocator = this.page.locator(`//td[contains(text(),'${fileName}')]`);
     try {
-      await fileLocator.waitFor({ state: 'visible', timeout: 5*60*1000 });
+      await fileLocator.waitFor({ state: 'visible', timeout: 490*1000 });
       return true;
     } catch {
       return false;
