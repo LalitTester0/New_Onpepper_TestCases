@@ -77,10 +77,11 @@ export class HomePage extends BasePage {
   async uploadCLOFile(fileNameKey: string) {
     const filePath = process.env[fileNameKey];
     if (!filePath) throw new Error(`Environment variable ${fileNameKey} not found`);
+    const absoluteFilePath = path.resolve(process.cwd(), filePath);
     const fileChooserPromise = this.page.waitForEvent('filechooser');
     await this.dragAndDropField.click();
     const fileChooser = await fileChooserPromise;
-    await fileChooser.setFiles(filePath);
+    await fileChooser.setFiles(absoluteFilePath);
   }
 
   async selectUploadFileOption(optionName: string) {
@@ -116,8 +117,9 @@ export class HomePage extends BasePage {
     await this.exportBtn.click();
     const download = await downloadPromise;
     const downloadDir = process.env.downloadFilepath || './downloads';
+    const absoluteDownloadDir = path.resolve(process.cwd(), downloadDir);
     const suggestedName = download.suggestedFilename();
-    const dest = path.join(downloadDir, suggestedName);
+    const dest = path.join(absoluteDownloadDir, suggestedName);
     await download.saveAs(dest);
     return dest;
   }

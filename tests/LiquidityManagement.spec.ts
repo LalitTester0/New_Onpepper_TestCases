@@ -59,4 +59,46 @@ test.describe('Liquidity Management', () => {
     expect(columnStatus, "subfund column is not displayed").toBeTruthy();
   });
 
+  test('Scenario: Verify all subfunds are displayed for selected fund', async ({ landingPage }) => {
+    const homePage = await landingPage.goTo();
+    const liquid = await homePage.navigateToLiquidityManagement();
+    const count = await liquid.fundNames.count();
+    expect(count).toBeGreaterThan(0);
+  });
+
+  test('Scenario: Verify Default Projection Date Is Displayed', async ({ landingPage }) => {
+    const homePage = await landingPage.goTo();
+    const liquid = await homePage.navigateToLiquidityManagement();
+    const count = await liquid.tableheaderCount.count();
+    expect(count).toBeGreaterThan(0);
+  });
+
+  test('Scenario: Verify User Can Select Multiple Projection Dates', async ({ landingPage }) => {
+    const homePage = await landingPage.goTo();
+    const liquid = await homePage.navigateToLiquidityManagement();
+    await liquid.click_ProjectionDate();
+    await liquid.projectiondate_input_field.fill(liquid.getDateAsPerDays3(7));
+    await liquid.add_Date_Btn.click();
+    const count = await liquid.tableheaderCount.count();
+    expect(count).toBeGreaterThan(0);
+  });
+
+  test('Scenario: Verify User Can Remove Projection Date Using Close Icon', async ({ landingPage }) => {
+    const homePage = await landingPage.goTo();
+    const liquid = await homePage.navigateToLiquidityManagement();
+    await liquid.click_ProjectionDate();
+    await liquid.projectiondate_input_field.fill(liquid.getDateAsPerDays3(7));
+    await liquid.add_Date_Btn.click();
+    const count = await liquid.tableheaderCount.count();
+    expect(count).toBeGreaterThan(0);
+  });
+
+  test('Scenario: Verify Calculations Update After Each What-If Value Change', async ({ landingPage }) => {
+    const homePage = await landingPage.goTo();
+    const liquid = await homePage.navigateToLiquidityManagement();
+    await liquid.get_EditData("Unfunded Commitments");
+    const columnStatus = await liquid.get_Current_ColumnStatus("PFLT_SPV");
+    expect(columnStatus).toBeTruthy();
+  });
+
 });

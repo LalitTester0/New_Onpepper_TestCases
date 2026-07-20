@@ -169,13 +169,21 @@ export class SourceFileLists extends BasePage {
     const originalFilePath = process.env[originalEnvKey];
     if (!originalFilePath) throw new Error(`Missing ${originalEnvKey}`);
     
+    const absoluteOriginalPath = path.resolve(process.cwd(), originalFilePath);
+    
     const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
-    const newFileName = `${newFileNameBase}_${timestamp}${path.extname(originalFilePath)}`;
+    const newFileName = `${newFileNameBase}_${timestamp}${path.extname(absoluteOriginalPath)}`;
     
     const renameFolderPath = process.env.RenamedFolderPath || './';
-    const newFilePath = path.join(renameFolderPath, newFileName);
+    const absoluteRenameFolderPath = path.resolve(process.cwd(), renameFolderPath);
     
-    fs.copyFileSync(originalFilePath, newFilePath);
+    if (!fs.existsSync(absoluteRenameFolderPath)) {
+      fs.mkdirSync(absoluteRenameFolderPath, { recursive: true });
+    }
+    
+    const newFilePath = path.join(absoluteRenameFolderPath, newFileName);
+    
+    fs.copyFileSync(absoluteOriginalPath, newFilePath);
 
     // Bypass the OS filechooser and set the file directly on the hidden input element
     await this.page.locator("input[type='file']").first().setInputFiles(newFilePath);

@@ -64,7 +64,7 @@ test.describe('Export Reports', () => {
     expect(fs.existsSync(downloadedFile!)).toBeTruthy();
   });
 
-  test.only('Scenario: What-If Analysis PCOF Fund', async ({ landingPage }) => {
+  test('Scenario: What-If Analysis PCOF Fund', async ({ landingPage }) => {
     const fundName = "PCOF";
     const homePage = await landingPage.goTo();
     await homePage.clickViewResultBtn(fundName);
@@ -93,5 +93,48 @@ test.describe('Export Reports', () => {
     await homePage.uploadCLOFile("PFLT_CLOFile");
     await homePage.clickProceedBtn();
     await homePage.page.waitForTimeout(5000);
+  });
+
+  const remainingFunds = ["PFLT", "PSSL", "PSLF", "PSCF"];
+  for (const fundName of remainingFunds) {
+    test(`Scenario: View Report ${fundName}`, async ({ landingPage }) => {
+      const homePage = await landingPage.goTo();
+      const data = await homePage.navigateToDataIngestion();
+      const base = await data.clickOnBaseData(fundName, "Completed");
+      await base.clickConfirmAndProceedBtn();
+      await base.clickSaveTriggerButton();
+      const rowStatus = await homePage.getRowStatus("PL BB Build");
+      expect(rowStatus, "row is not present").toBeTruthy();
+    });
+
+    test(`Scenario: What-If Analysis ${fundName} Fund`, async ({ landingPage }) => {
+      const homePage = await landingPage.goTo();
+      await homePage.clickViewResultBtn(fundName);
+      await homePage.clickWhatIfAnalysisBtn();
+      const wia_text = await homePage.updateValuesWIA("Investment Cost", fundName, 'PL BB Build');
+      expect(wia_text).toBeTruthy();
+      await homePage.saveWIAData(fundName);
+    });
+
+    test(`Scenario: Use What-If Analysis ${fundName} Fund`, async ({ landingPage }) => {
+      const homePage = await landingPage.goTo();
+      await homePage.clickViewResultBtn(fundName);
+      await homePage.clickWhatIfAnalysisOption();
+    });
+  }
+
+  const allFunds = ["PCOF", "PFLT", "PSSL", "PSLF", "PSCF"];
+  for (const fundName of allFunds) {
+    test(`Scenario: Reuse ${fundName} fund`, async ({ landingPage }) => {
+      const homePage = await landingPage.goTo();
+      await homePage.clickViewResultBtn(fundName);
+      await homePage.clickWhatIfAnalysisOption();
+    });
+  }
+
+  test('Scenario: Use What-If Analysis PFLT Fund 2', async ({ landingPage }) => {
+    const homePage = await landingPage.goTo();
+    await homePage.clickViewResultBtn("PFLT");
+    await homePage.clickWhatIfAnalysisOption();
   });
 });

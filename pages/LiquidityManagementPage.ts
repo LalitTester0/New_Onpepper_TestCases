@@ -150,7 +150,8 @@ export class LiquidityManagementPage extends BasePage {
     await this.exportBtn.click();
     const download = await downloadPromise;
     const downloadDir = process.env.downloadFilepath || './downloads';
-    const dest = path.join(downloadDir, download.suggestedFilename());
+    const absoluteDownloadDir = path.resolve(process.cwd(), downloadDir);
+    const dest = path.join(absoluteDownloadDir, download.suggestedFilename());
     await download.saveAs(dest);
     return dest;
   }

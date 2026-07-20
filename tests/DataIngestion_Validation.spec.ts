@@ -1,3 +1,5 @@
+
+
 import { test, expect } from './fixtures/baseTest';
 
 test.describe('Data Ingestion Validation', () => {
@@ -143,5 +145,44 @@ test.describe('Data Ingestion Validation', () => {
     const names = await dataPage.getBaseFileAsPerDate("PSSL");
     const status = dataPage.verifyAllFileNamesPresent(names, fileNames);
     expect(status, `${fileNames} is not present`).toBeTruthy();
+  });
+  test('Scenario: Filter PCOF files on Data Ingestion page and verify filtering logic', async ({ landingPage }) => {
+    const homePage = await landingPage.goTo();
+    const data = await homePage.navigateToDataIngestion();
+    const fundsLocator = await data.filteredPCOFValue();
+    const count = await fundsLocator.count();
+    if (count === 0) {
+      const text = await data.noDataCellText();
+      expect(text).toBe("No Data");
+    } else {
+      let allMatch = true;
+      for (let i = 0; i < count; i++) {
+        const text = await fundsLocator.nth(i).innerText();
+        if (!text.includes("PCOF")) {
+          allMatch = false;
+        }
+      }
+      expect(allMatch, "PCOF Funds are not get filtered").toBeTruthy();
+    }
+  });
+
+  test('Scenario: Filter PFLT files on Data Ingestion page and verify filtering logic', async ({ landingPage }) => {
+    const homePage = await landingPage.goTo();
+    const data = await homePage.navigateToDataIngestion();
+    const fundsLocator = await data.filteredPFLTValue();
+    const count = await fundsLocator.count();
+    if (count === 0) {
+      const text = await data.noDataCellText();
+      expect(text).toBe("No Data");
+    } else {
+      let allMatch = true;
+      for (let i = 0; i < count; i++) {
+        const text = await fundsLocator.nth(i).innerText();
+        if (!text.includes("PFLT")) {
+          allMatch = false;
+        }
+      }
+      expect(allMatch, "PFLT Funds are not get filtered").toBeTruthy();
+    }
   });
 });
