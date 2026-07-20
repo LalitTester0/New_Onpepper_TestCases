@@ -37,7 +37,9 @@ export class BaseDataPreview extends BasePage {
     this.confirmProceedBtn = page.locator("//span[contains(text(),'Confirm & Proceed')]/parent::button");
     this.saveBtn = page.locator("//span[contains(text(),'Save')]/parent::button");
     this.confirmBtn = page.locator("//span[contains(text(),'Confirm')]/parent::button");
-    this.saveTriggerBtn = page.locator("//span[contains(text(),'Save & Trigger')]/parent::button");
+    this.saveTriggerBtn = page.locator('button').filter({ hasText: 'Save & Trigger' }).first();
+
+
   }
 
   async clickTriggerButton() {

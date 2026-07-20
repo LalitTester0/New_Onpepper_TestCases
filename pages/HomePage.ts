@@ -35,7 +35,7 @@ export class HomePage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.optionBtn = page.locator("((//nav//following-sibling::div)[3]//img)[3]");
+    this.optionBtn = page.locator("[class*='_menuIcon']");
     this.toastMsg = page.locator("//div[contains(@class,'Toastify__toast-icon')]/following-sibling::div");
     this.closeFormulaBtn = page.locator("//span[text()='Formula']/parent::div/parent::div/parent::div//button[@aria-label='Close']");
     this.whatIfAnalysisBtn = page.locator("//span[contains(text(),'What-if Analysis')]/parent::button");
@@ -77,7 +77,6 @@ export class HomePage extends BasePage {
   async uploadCLOFile(fileNameKey: string) {
     const filePath = process.env[fileNameKey];
     if (!filePath) throw new Error(`Environment variable ${fileNameKey} not found`);
-    // In Playwright, we can upload directly via input type=file, but if it's drag&drop we might need fileChooser
     const fileChooserPromise = this.page.waitForEvent('filechooser');
     await this.dragAndDropField.click();
     const fileChooser = await fileChooserPromise;
@@ -175,7 +174,8 @@ export class HomePage extends BasePage {
     return new DataIngestion(this.page);
   }
 
-  async updateValuesWIA(columnName: string, fundName: string): Promise<boolean> {
+  async updateValuesWIA(columnName: string, fundName: string,tabName:string): Promise<boolean> {
+    await this.page.getByText(tabName).click();
     await this.waitForElementAppear(this.selectColumnDropdown);
     await this.selectColumnDropdown.click();
     await this.page.locator(`(//option[contains(text(),'${columnName}')])[2]`).click();

@@ -96,9 +96,10 @@ export class ExtractNewBaseData extends BasePage {
   }
 
   async checkFileStatusUpload(keyword: string): Promise<boolean> {
+    await this.fileNames.first().waitFor({ state: 'attached', timeout: 5000 });
     const count = await this.fileNames.count();
     for (let i = 0; i < count; i++) {
-      const text = await this.fileNames.nth(i).innerText();
+      const text = await this.fileNames.nth(i).textContent();
       if (text && text.toLowerCase().includes(keyword)) {
         return true;
       }
@@ -109,8 +110,6 @@ export class ExtractNewBaseData extends BasePage {
   async handleMissingFile(uploadMethodName: string) {
     await this.clickUploadNewBtn();
     const source = new SourceFileLists(this.page);
-    // TypeScript doesn't let us dynamically call methods safely without indexing,
-    // but we can map string to method here:
     if (uploadMethodName === 'uploadNewMasterFile') await source.uploadNewMasterFile();
     else if (uploadMethodName === 'uploadNewCashFile') await source.uploadNewCashFile();
     else if (uploadMethodName === 'uploadNewRatingFile') await source.uploadNewRatingFile();
@@ -125,9 +124,10 @@ export class ExtractNewBaseData extends BasePage {
   }
 
   async marketFileStatusUpload(): Promise<boolean> {
+    console.log('market')
     const status = await this.checkFileStatusUpload('market');
     if (!status) {
-      await this.handleMissingFile('uploadNewMasterFile'); // As per Java code: source.uploadNewMasterFile();
+      await this.handleMissingFile('uploadNewMasterFile');
     }
     return status;
   }
@@ -149,6 +149,7 @@ export class ExtractNewBaseData extends BasePage {
   }
 
   async masterFileStatusUpload(): Promise<boolean> {
+    console.log('master')
     const status = await this.checkFileStatusUpload('master');
     if (!status) {
       await this.handleMissingFile('uploadNewMasterFile');

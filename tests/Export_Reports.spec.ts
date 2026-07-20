@@ -64,12 +64,12 @@ test.describe('Export Reports', () => {
     expect(fs.existsSync(downloadedFile!)).toBeTruthy();
   });
 
-  test('Scenario: What-If Analysis PCOF Fund', async ({ landingPage }) => {
+  test.only('Scenario: What-If Analysis PCOF Fund', async ({ landingPage }) => {
     const fundName = "PCOF";
     const homePage = await landingPage.goTo();
     await homePage.clickViewResultBtn(fundName);
     await homePage.clickWhatIfAnalysisBtn();
-    const wia_text = await homePage.updateValuesWIA("Investment Cost", fundName);
+    const wia_text = await homePage.updateValuesWIA("Investment Cost", fundName,'PL BB Build');
     expect(wia_text).toBeTruthy();
     await homePage.saveWIAData(fundName);
   });

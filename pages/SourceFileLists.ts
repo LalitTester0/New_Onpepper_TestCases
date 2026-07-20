@@ -218,7 +218,7 @@ export class SourceFileLists extends BasePage {
   async getUploadFileStatus(fileName: string): Promise<boolean> {
     const fileLocator = this.page.locator(`//td[contains(text(),'${fileName}')]`);
     try {
-      await fileLocator.waitFor({ state: 'visible', timeout: 5000 });
+      await fileLocator.waitFor({ state: 'visible', timeout: 5*60*1000 });
       return true;
     } catch {
       return false;

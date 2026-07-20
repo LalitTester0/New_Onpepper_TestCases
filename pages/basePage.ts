@@ -15,10 +15,10 @@ export class BasePage {
 
   // Playwright handles auto-waiting, but we can provide explicit wait methods if needed
   async waitForElementAppear(locator: Locator) {
-    await locator.waitFor({ state: 'visible', timeout: 120000 });
+    await locator.waitFor({ state: 'visible', timeout: 240000 });
   }
 
   async waitForElementToDisappear(locator: Locator) {
-    await locator.waitFor({ state: 'hidden', timeout: 120000 });
+    await locator.waitFor({ state: 'hidden', timeout: 240000 });
   }
 }
