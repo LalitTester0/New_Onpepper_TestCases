@@ -5,13 +5,13 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 240000,
+  timeout: 120000,
   expect: {
     timeout: 15000,
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1,
+  retries: process.env.CI ? 2 : 0,
   
   workers: process.env.CI ? 1 : 4,
   reporter: 'html',

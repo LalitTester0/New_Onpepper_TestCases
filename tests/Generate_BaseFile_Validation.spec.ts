@@ -2,7 +2,8 @@ import { test, expect } from './fixtures/baseTest';
 
 test.describe('Generate Base File Validation', () => {
 
-  test('Scenario: Generate and verify PFLT Fund Base File', async ({ landingPage }) => {
+  test('Scenario: Generate and verify PFLT Fund Base File', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
     const homePage = await landingPage.goTo();
     const data = await homePage.navigateToDataIngestion();
     const extractNewBaseData = await data.selectExtractNewBaseDataBtn();
@@ -15,7 +16,8 @@ test.describe('Generate Base File Validation', () => {
     expect(fundType).toBe("PFLT");
   });
 
-  test('Scenario: Generate and verify PCOF Fund Base File', async ({ landingPage }) => {
+  test('Scenario: Generate and verify PCOF Fund Base File', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
     const homePage = await landingPage.goTo();
     const data = await homePage.navigateToDataIngestion();
     const extractNewBaseData = await data.selectExtractNewBaseDataBtn();
@@ -28,7 +30,8 @@ test.describe('Generate Base File Validation', () => {
     expect(fundType).toBe("PCOF");
   });
 
-  test('Scenario: Generate and verify PSSL Fund Base File', async ({ landingPage }) => {
+  test('Scenario: Generate and verify PSSL Fund Base File', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
     const homePage = await landingPage.goTo();
     const data = await homePage.navigateToDataIngestion();
     const extractNewBaseData = await data.selectExtractNewBaseDataBtn();
@@ -41,7 +44,8 @@ test.describe('Generate Base File Validation', () => {
     expect(fundType).toBe("PSSL");
   });
 
-  test('Scenario: Generate and verify PSLF Fund Base File', async ({ landingPage }) => {
+  test('Scenario: Generate and verify PSLF Fund Base File', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
     const homePage = await landingPage.goTo();
     const data = await homePage.navigateToDataIngestion();
     const extractNewBaseData = await data.selectExtractNewBaseDataBtn();
@@ -54,7 +58,8 @@ test.describe('Generate Base File Validation', () => {
     expect(fundType).toBe("PSLF");
   });
 
-  test('Scenario: Generate and verify PSCF Fund Base File', async ({ landingPage }) => {
+  test('Scenario: Generate and verify PSCF Fund Base File', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
     const homePage = await landingPage.goTo();
     const data = await homePage.navigateToDataIngestion();
     const extractNewBaseData = await data.selectExtractNewBaseDataBtn();

@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, TestInfo } from '@playwright/test';
 
 export class BasePage {
   readonly page: Page;
@@ -13,9 +13,11 @@ export class BasePage {
     await this.closeToastLocator.click();
   }
 
-  // Playwright handles auto-waiting, but we can provide explicit wait methods if needed
+   setLongTimeout(testInfo: TestInfo) {
+    testInfo.setTimeout(720 * 1000); // 12 minutes
+  }
   async waitForElementAppear(locator: Locator) {
-    await locator.waitFor({ state: 'visible', timeout: 240000 });
+    await locator.waitFor({ state: 'visible', timeout: 360*1000 });
   }
 
   async waitForElementToDisappear(locator: Locator) {

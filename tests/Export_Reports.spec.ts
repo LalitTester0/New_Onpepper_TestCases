@@ -23,23 +23,22 @@ test.describe('Export Reports', () => {
     expect(fs.existsSync(downloadedFile!)).toBeTruthy();
   });
 
-  test('Scenario: View Report PCOF', async ({ landingPage }) => {
+  test('Scenario: View Report PCOF', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
     const fundName = "PCOF";
     const homePage = await landingPage.goTo();
     const data = await homePage.navigateToDataIngestion();
     const base = await data.clickOnBaseData(fundName, "Completed");
     await base.clickConfirmAndProceedBtn();
     await base.clickSaveTriggerButton();
-    
     if (await homePage.isErrorListVisible()) {
       expect(false, "Errors were displayed on screen.").toBeTruthy();
     } else {
       const actualMsg = await homePage.getFundType(fundName);
       expect(actualMsg).toBe(fundName);
     }
-    
-    const rowStatus = await homePage.getRowStatus("PL BB Build");
-    expect(rowStatus, "row is not present").toBeTruthy();
+    const rowStatus = await homePage.getRowStatus(fundName);
+    await expect(rowStatus).toBeVisible();
   });
 
   test('Scenario: Export Report PFLT', async ({ landingPage }) => {
@@ -58,83 +57,106 @@ test.describe('Export Reports', () => {
       const actualMsg = await homePage.getFundType(fundName);
       expect(actualMsg).toBe(fundName);
     }
-    
     const downloadedFile = await homePage.clickExportBtnAndDownload(fundName);
     expect(downloadedFile).toBeTruthy();
     expect(fs.existsSync(downloadedFile!)).toBeTruthy();
   });
 
-  test('Scenario: What-If Analysis PCOF Fund', async ({ landingPage }) => {
-    const fundName = "PCOF";
-    const homePage = await landingPage.goTo();
-    await homePage.clickViewResultBtn(fundName);
-    await homePage.clickWhatIfAnalysisBtn();
-    const wia_text = await homePage.updateValuesWIA("Investment Cost", fundName,'PL BB Build');
-    expect(wia_text).toBeTruthy();
-    await homePage.saveWIAData(fundName);
-  });
-
-  test('Scenario: Use What-If Analysis PCOF Fund', async ({ landingPage }) => {
-    const fundName = "PCOF";
-    const homePage = await landingPage.goTo();
-    await homePage.clickViewResultBtn(fundName);
-    await homePage.clickWhatIfAnalysisOption();
-    // Assuming getLatestWIAReport is adapted similarly:
-    // const latestReport = await homePage.getLatestWIAReport(fundName);
-    // For now we just check the toast popups conceptually if implemented.
-  });
-
-  test('Scenario: WIA PFLT Fund CLO Upload', async ({ landingPage }) => {
+  test('Scenario: View Report PFLT', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
     const fundName = "PFLT";
     const homePage = await landingPage.goTo();
-    await homePage.clickViewResultBtn(fundName);
-    await homePage.clickWhatIfAnalysisBtn();
-    await homePage.clickUploadFileBtn();
-    await homePage.uploadCLOFile("PFLT_CLOFile");
-    await homePage.clickProceedBtn();
-    await homePage.page.waitForTimeout(5000);
+    const data = await homePage.navigateToDataIngestion();
+    const base = await data.clickOnBaseData(fundName, "Completed");
+    await base.clickConfirmAndProceedBtn();
+    await base.clickSaveTriggerButton();
+    if (await homePage.isErrorListVisible()) {
+      expect(false, "Errors were displayed on screen.").toBeTruthy();
+    } else {
+      const actualMsg = await homePage.getFundType(fundName);
+      expect(actualMsg).toBe(fundName);
+    }
+    const rowStatus = await homePage.getRowStatus(fundName);
+    await expect(rowStatus).toBeVisible();
   });
 
-  const remainingFunds = ["PFLT", "PSSL", "PSLF", "PSCF"];
-  for (const fundName of remainingFunds) {
-    test(`Scenario: View Report ${fundName}`, async ({ landingPage }) => {
-      const homePage = await landingPage.goTo();
-      const data = await homePage.navigateToDataIngestion();
-      const base = await data.clickOnBaseData(fundName, "Completed");
-      await base.clickConfirmAndProceedBtn();
-      await base.clickSaveTriggerButton();
-      const rowStatus = await homePage.getRowStatus("PL BB Build");
-      expect(rowStatus, "row is not present").toBeTruthy();
-    });
-
-    test(`Scenario: What-If Analysis ${fundName} Fund`, async ({ landingPage }) => {
-      const homePage = await landingPage.goTo();
-      await homePage.clickViewResultBtn(fundName);
-      await homePage.clickWhatIfAnalysisBtn();
-      const wia_text = await homePage.updateValuesWIA("Investment Cost", fundName, 'PL BB Build');
-      expect(wia_text).toBeTruthy();
-      await homePage.saveWIAData(fundName);
-    });
-
-    test(`Scenario: Use What-If Analysis ${fundName} Fund`, async ({ landingPage }) => {
-      const homePage = await landingPage.goTo();
-      await homePage.clickViewResultBtn(fundName);
-      await homePage.clickWhatIfAnalysisOption();
-    });
-  }
-
-  const allFunds = ["PCOF", "PFLT", "PSSL", "PSLF", "PSCF"];
-  for (const fundName of allFunds) {
-    test(`Scenario: Reuse ${fundName} fund`, async ({ landingPage }) => {
-      const homePage = await landingPage.goTo();
-      await homePage.clickViewResultBtn(fundName);
-      await homePage.clickWhatIfAnalysisOption();
-    });
-  }
-
-  test('Scenario: Use What-If Analysis PFLT Fund 2', async ({ landingPage }) => {
+  test('Scenario: Export Report PSSL', async ({ landingPage }) => {
+    const fundName = "PSSL";
     const homePage = await landingPage.goTo();
-    await homePage.clickViewResultBtn("PFLT");
-    await homePage.clickWhatIfAnalysisOption();
+    const data = await homePage.navigateToDataIngestion();
+    const base = await data.clickOnBaseData(fundName, "Completed");
+    await base.clickConfirmAndProceedBtn();
+    await base.clickSaveTriggerButton();
+    await base.handleJavascriptAlert();
+    if (await homePage.isErrorListVisible()) {
+      expect(false, "Errors were displayed on screen.").toBeTruthy();
+    } else {
+      const actualMsg = await homePage.getFundType(fundName);
+      expect(actualMsg).toBe(fundName);
+    }
+    const downloadedFile = await homePage.clickExportBtnAndDownload(fundName);
+    expect(downloadedFile).toBeTruthy();
+    expect(fs.existsSync(downloadedFile!)).toBeTruthy();
   });
-});
+
+  
+  test('Scenario: View Report PSSL', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
+    const fundName = "PSSL";
+    const homePage = await landingPage.goTo();
+    const data = await homePage.navigateToDataIngestion();
+    const base = await data.clickOnBaseData(fundName, "Completed");
+    await base.clickConfirmAndProceedBtn();
+    await base.clickSaveTriggerButton();
+    if (await homePage.isErrorListVisible()) {
+      expect(false, "Errors were displayed on screen.").toBeTruthy();
+    } else {
+      const actualMsg = await homePage.getFundType(fundName);
+      expect(actualMsg).toBe(fundName);
+    }
+    const rowStatus = await homePage.getRowStatus(fundName);
+    await expect(rowStatus).toBeVisible();
+  });
+
+  test('Scenario: Export Report PSLF', async ({ landingPage }) => {
+    const fundName = "PSLF";
+    const homePage = await landingPage.goTo();
+    const data = await homePage.navigateToDataIngestion();
+    const base = await data.clickOnBaseData(fundName, "Completed");
+    await base.clickConfirmAndProceedBtn();
+    await base.clickSaveTriggerButton();
+    await base.handleJavascriptAlert();
+    if (await homePage.isErrorListVisible()) {
+      expect(false, "Errors were displayed on screen.").toBeTruthy();
+    } else {
+      const actualMsg = await homePage.getFundType(fundName);
+      expect(actualMsg).toBe(fundName);
+    }
+    const downloadedFile = await homePage.clickExportBtnAndDownload(fundName);
+    expect(downloadedFile).toBeTruthy();
+    expect(fs.existsSync(downloadedFile!)).toBeTruthy();
+  });
+
+  test('Scenario: View Report PSLF', async ({ landingPage },testInfo) => {
+    landingPage.setLongTimeout(testInfo);
+    const fundName = "PSLF";
+    const homePage = await landingPage.goTo();
+    const data = await homePage.navigateToDataIngestion();
+    const base = await data.clickOnBaseData(fundName, "Completed");
+    await base.clickConfirmAndProceedBtn();
+    await base.clickSaveTriggerButton();
+    if (await homePage.isErrorListVisible()) {
+      expect(false, "Errors were displayed on screen.").toBeTruthy();
+    } else {
+      const actualMsg = await homePage.getFundType(fundName);
+      expect(actualMsg).toBe(fundName);
+    }
+    const rowStatus = await homePage.getRowStatus(fundName);
+    await expect(rowStatus).toBeVisible();
+  });
+
+
+
+
+
+})

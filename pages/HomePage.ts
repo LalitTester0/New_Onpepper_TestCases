@@ -10,9 +10,9 @@ export class HomePage extends BasePage {
   readonly closeFormulaBtn: Locator;
   readonly whatIfAnalysisBtn: Locator;
   readonly selectColumnDropdown: Locator;
+  readonly saveWIABtn: Locator;
   readonly saveBtn: Locator;
-  readonly saveBtn2: Locator;
-  readonly untitledField: Locator;
+  readonly wiaNameField: Locator;
   readonly notesField: Locator;
   readonly whatIfAnalysisOption: Locator;
   readonly borrowingBaseLibraryOption: Locator;
@@ -40,13 +40,13 @@ export class HomePage extends BasePage {
     this.closeFormulaBtn = page.locator("//span[text()='Formula']/parent::div/parent::div/parent::div//button[@aria-label='Close']");
     this.whatIfAnalysisBtn = page.locator("//span[contains(text(),'What-if Analysis')]/parent::button");
     this.selectColumnDropdown = page.locator("//div[contains(text(),'Update Values')]/parent::div//select");
-    this.saveBtn = page.locator("(//span[text()='Save']/parent::button)[1]");
-    this.saveBtn2 = page.locator("(//span[text()='Save']/parent::button)[2]");
-    this.untitledField = page.locator("//input[@placeholder='Untitled']");
-    this.notesField = page.locator("//input[@placeholder='Notes']");
+    this.saveWIABtn = page.getByRole('button', { name: 'Save WIA Report' });
+    this.saveBtn = page.getByText('Save', { exact: true });
+    this.wiaNameField = page.getByPlaceholder('Name for the analysis report');
+    this.notesField = page.getByPlaceholder('Notes');
     this.whatIfAnalysisOption = page.locator("//div[contains(text(),'What-if Analysis library')]");
     this.borrowingBaseLibraryOption = page.locator("//div[contains(text(),'Borrowing Base Reports Library')]");
-    this.dataIngestionBtn = page.locator("//span[contains(.,'Data Ingestion')]/parent::div");
+    this.dataIngestionBtn = page.getByText('Data Ingestion', { exact: true });
     this.errorLists = page.locator("//span[contains(@class,'_columnName_')]");
     this.exportReportBtn = page.locator("//span[contains(text(),'Export Report')]/parent::button");
     this.exportBtn = page.locator("//span[contains(text(),'Cancel')]/parent::button//following-sibling::button");
@@ -106,11 +106,6 @@ export class HomePage extends BasePage {
     await this.viewReportBtn.click();
   }
 
-  async isRowPresent(): Promise<boolean> {
-    const count = await this.page.locator('tr').count();
-    return count > 0;
-  }
-
   async clickExportBtnAndDownload(fundName: string): Promise<string | null> {
     await this.clickExportReportBtn();
     const downloadPromise = this.page.waitForEvent('download');
@@ -130,12 +125,10 @@ export class HomePage extends BasePage {
     return await fundTypeLocator.innerText();
   }
 
-  async getRowStatus(tabName: string): Promise<boolean> {
-    await this.clickViewReportBtn();
-    await this.page.locator(`//div[contains(text(),'${tabName}')]`).click();
-    await this.page.waitForTimeout(5000); // Wait for rows to populate
-    return await this.isRowPresent();
-  }
+  async getRowStatus(fundName: string) {
+  await this.clickViewReportBtn();
+  return this.page.locator(`h4:has-text("${fundName} Borrowing Base Report for")`);
+}
 
   async isErrorListVisible(): Promise<boolean> {
     const count = await this.errorLists.count();
@@ -165,10 +158,10 @@ export class HomePage extends BasePage {
   async saveWIAData(fundName: string) {
     const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
     const value = `${fundName}_${timestamp}`;
-    await this.untitledField.fill(value);
-    await this.saveBtn.click();
+    await this.saveWIABtn.click();
+    await this.wiaNameField.fill(value);
     await this.notesField.fill("Test");
-    await this.saveBtn2.click();
+    await this.saveBtn.click();
   }
 
   async navigateToDataIngestion(): Promise<DataIngestion> {
@@ -177,15 +170,16 @@ export class HomePage extends BasePage {
   }
 
   async updateValuesWIA(columnName: string, fundName: string,tabName:string): Promise<boolean> {
-    await this.page.getByText(tabName).click();
+    await this.page.getByText(tabName,{exact:true}).click();
     await this.waitForElementAppear(this.selectColumnDropdown);
     await this.selectColumnDropdown.click();
-    await this.page.locator(`(//option[contains(text(),'${columnName}')])[2]`).click();
+    await this.page.locator('#selectColumn').last().selectOption({value:columnName});
     await this.changeValueTextfield.fill("10");
     await this.applyChangesBtn.click();
     await this.runBtn.hover();
     await this.runBtn.click();
-    const wiaText = this.page.locator(`//div[contains(text(),'Showing ${fundName} What-If Analysis Report for')]`);
+     const wiaText = this.page.locator('div').filter({ hasText: `Showing ${fundName} What-If Analysis Report for` }).first()
+    //this.page.locator(`//div[contains(text(),'Showing ${fundName} What-If Analysis Report for')]`);
     await this.waitForElementAppear(wiaText);
     return await wiaText.isVisible();
   }

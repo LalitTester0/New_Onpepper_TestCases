@@ -224,7 +224,8 @@ export class ExtractNewBaseData extends BasePage {
 
   async selectFund(fundtype: string) {
     await this.selectFundDropdown.click();
-    await this.page.locator(`//div[contains(text(),'${fundtype}')]`).click();
+   // await this.page.locator(`//div[contains(text(),'${fundtype}')]`).click();
+    await this.page.getByText(`${fundtype}`, { exact: true }).click();
   }
 
   uploadDate(): string {

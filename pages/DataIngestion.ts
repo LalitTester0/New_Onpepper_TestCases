@@ -31,7 +31,7 @@ export class DataIngestion extends BasePage {
     this.pcofFundTypeColumn = page.locator("//td[3]//span[text()='PCOF']");
     this.noDataCell = page.locator("//td[contains(text(),'No Data')]");
     this.sourceFiletab = page.locator("//div[text()='Source Files']");
-    this.extractNewBaseDataBtn = page.locator("//span[contains(text(),' Extract New Base Data')]/parent::button");
+    this.extractNewBaseDataBtn = page.getByText('+ Extract New Base Data',{exact:true});
   }
 
   async selectSourceFileTab(): Promise<SourceFileLists> {
