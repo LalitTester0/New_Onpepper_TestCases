@@ -17,8 +17,12 @@ export class ExtractNewBaseData extends BasePage {
   readonly psslfCashSourceFile: Locator;
   readonly pslfCashSourceFile: Locator;
   readonly pscfCashSourceFile: Locator;
+  readonly ppifCashSourceFile: Locator;
   readonly dataMappingText: Locator;
   readonly startExtractionBtn: Locator;
+  readonly pssl_ii_CashFile:Locator;
+  readonly pnnt_CashFile:Locator;
+  readonly pnnt_day_File:Locator
 
   constructor(page: Page) {
     super(page);
@@ -37,11 +41,17 @@ export class ExtractNewBaseData extends BasePage {
     this.pscfCashSourceFile = page.locator("(//td[contains(text(),'PSCF_Cash')]/parent::tr//td[1]//input)[1]");
     this.dataMappingText = page.locator("//h1[contains(text(),'Data mapping')]");
     this.startExtractionBtn = page.locator("//span[contains(text(),'Start Extraction')]/parent::button");
+    this.ppifCashSourceFile=page.locator("(//td[contains(text(),'PennantPark Private Income Fund SPV')]/parent::tr//td[1]//input)[1]")
+    this.pssl_ii_CashFile=page.locator("(//td[contains(text(),'PSSL II SPV LLC_Cash')]/parent::tr//td[1]//input)[1]");
+    this.pnnt_CashFile=page.locator("(//td[contains(text(),'PNNT_SOI')]/parent::tr//td[1]//input)[1]");
+    this.pnnt_day_File=page.locator("(//td[contains(text(),'PNNT Daily TB1')]/parent::tr//td[1]//input)[1]");
+  
+  
+  
   }
 
   async clickStartExtractionBtn(): Promise<BaseDataPreview> {
     await this.startExtractionBtn.waitFor({ state: 'visible' });
-    await this.page.waitForTimeout(10);
     await this.startExtractionBtn.click();
     return new BaseDataPreview(this.page);
   }
@@ -95,6 +105,34 @@ export class ExtractNewBaseData extends BasePage {
     await this.clickNextBtn();
   }
 
+  async selectSourceFileForPPIF() {
+    await this.masterCompSourceFile.scrollIntoViewIfNeeded();
+    await this.masterCompSourceFile.click();
+    await this.ppifCashSourceFile.scrollIntoViewIfNeeded();
+    await this.ppifCashSourceFile.click();
+    await this.clickNextBtn();
+  }
+
+   async selectSourceFileForPSSL_II() {
+    await this.masterCompSourceFile.scrollIntoViewIfNeeded();
+    await this.masterCompSourceFile.click();
+    await this.ratingsSourceFile.scrollIntoViewIfNeeded();
+    await this.ratingsSourceFile.click();
+    await this.pssl_ii_CashFile.scrollIntoViewIfNeeded();
+    await this.pssl_ii_CashFile.click();
+    await this.clickNextBtn();
+  }
+
+  async selectSourceFileForPNNT() {
+    await this.masterCompSourceFile.scrollIntoViewIfNeeded();
+    await this.masterCompSourceFile.click();
+    await this.pnnt_CashFile.scrollIntoViewIfNeeded();
+    await this.pnnt_CashFile.click();
+    await this.pnnt_day_File.scrollIntoViewIfNeeded();
+    await this.pnnt_day_File.click();
+    await this.clickNextBtn();
+  }
+
   async checkFileStatusUpload(keyword: string): Promise<boolean> {
     await this.fileNames.first().waitFor({ state: 'attached', timeout: 5000 });
     const count = await this.fileNames.count();
@@ -116,15 +154,11 @@ export class ExtractNewBaseData extends BasePage {
     else if (uploadMethodName === 'uploadNewCashFileforPSLF') await source.uploadNewCashFileforPSLF();
     else if (uploadMethodName === 'uploadNewCashFileforPSCF') await source.uploadNewCashFileforPSCF();
     else if (uploadMethodName === 'uploadNewCashFileforPSSL') await source.uploadNewCashFileforPSSL();
-    
-    await this.page.waitForTimeout(500);
     await this.clickLoadButton();
-    await this.page.waitForTimeout(500);
     await this.waitForElementToDisappear(this.loadBtn);
   }
 
   async marketFileStatusUpload(): Promise<boolean> {
-    console.log('market')
     const status = await this.checkFileStatusUpload('market');
     if (!status) {
       await this.handleMissingFile('uploadNewMasterFile');
@@ -149,7 +183,6 @@ export class ExtractNewBaseData extends BasePage {
   }
 
   async masterFileStatusUpload(): Promise<boolean> {
-    console.log('master')
     const status = await this.checkFileStatusUpload('master');
     if (!status) {
       await this.handleMissingFile('uploadNewMasterFile');
@@ -169,6 +202,38 @@ export class ExtractNewBaseData extends BasePage {
     const status = await this.checkFileStatusUpload('pscf_cashfile');
     if (!status) {
       await this.handleMissingFile('uploadNewCashFileforPSCF');
+    }
+    return status;
+  }
+
+  async ppifCashFileStatusUpload(): Promise<boolean> {
+    const status = await this.checkFileStatusUpload('pennantpark private income fund spv');
+    if (!status) {
+      await this.handleMissingFile('uploadNewCashFileforPPIF');
+    }
+    return status;
+  }
+
+  async pssl_II_CashFileStatusUpload(): Promise<boolean> {
+    const status = await this.checkFileStatusUpload('pssl ii spv llc_cash');
+    if (!status) {
+      await this.handleMissingFile('uploadNewCashFileforPSSL_II_SPV');
+    }
+    return status;
+  }
+
+  async pnnt_Day_FileStatusUpload(): Promise<boolean> {
+    const status = await this.checkFileStatusUpload('pnnt daily tb1');
+    if (!status) {
+      await this.handleMissingFile('uploadNewDailyFileforPNNT');
+    }
+    return status;
+  }
+
+  async pnnt_Cash_FileStatusUpload(): Promise<boolean> {
+    const status = await this.checkFileStatusUpload('pnnt_soi');
+    if (!status) {
+      await this.handleMissingFile('uploadNewCashFileforPNNT');
     }
     return status;
   }
@@ -222,9 +287,29 @@ export class ExtractNewBaseData extends BasePage {
     await this.clickNextBtn();
   }
 
+  async checkSourceFileAvailabilityForPPIF() {
+    await this.ppifCashFileStatusUpload();
+    await this.masterFileStatusUpload();
+    await this.clickNextBtn();
+  }
+
+  async checkSourceFileAvailabilityForPSSL_II() {
+    await this.ratingsFileStatusUpload();
+    await this.masterFileStatusUpload();
+    await this.pssl_II_CashFileStatusUpload();
+    await this.clickNextBtn();
+  }
+
+  async checkSourceFileAvailabilityForPNNT() {
+    await this.masterFileStatusUpload();
+    await this.pnnt_Day_FileStatusUpload();
+    await this.pnnt_Cash_FileStatusUpload();
+    await this.clickNextBtn();
+  }
+
+
   async selectFund(fundtype: string) {
-    await this.selectFundDropdown.click();
-   // await this.page.locator(`//div[contains(text(),'${fundtype}')]`).click();
+    await this.selectFundDropdown.click();;
     await this.page.getByText(`${fundtype}`, { exact: true }).click();
   }
 

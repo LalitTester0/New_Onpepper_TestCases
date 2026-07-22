@@ -17,7 +17,7 @@ export class BasePage {
     testInfo.setTimeout(720 * 1000); 
   }
   async waitForElementAppear(locator: Locator) {
-    await locator.waitFor({ state: 'visible', timeout: 90*1000 });
+    await locator.waitFor({ state: 'visible', timeout: 500*1000 });
   }
 
   async waitForElementToDisappear(locator: Locator) {

@@ -110,7 +110,6 @@ export class SourceFileLists extends BasePage {
     return formattedString;
   }
 
-  // Same logic applied to other selectSourceFile...
   async selectSourceFileforPCOF(): Promise<string> {
     const date = this.uploadDate();
     await this.filteredPCOFValue();
