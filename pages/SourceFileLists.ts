@@ -172,31 +172,20 @@ export class SourceFileLists extends BasePage {
   }
 }
 
-
-  // Simplified file upload logic replacing AWT Robot with fileChooser
   async handleFileUpload(originalEnvKey: string, newFileNameBase: string): Promise<string> {
     const originalFilePath = process.env[originalEnvKey];
     if (!originalFilePath) throw new Error(`Missing ${originalEnvKey}`);
-    
     const absoluteOriginalPath = path.resolve(process.cwd(), originalFilePath);
-    
     const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
     const newFileName = `${newFileNameBase}_${timestamp}${path.extname(absoluteOriginalPath)}`;
-    
     const renameFolderPath = process.env.RenamedFolderPath || './';
     const absoluteRenameFolderPath = path.resolve(process.cwd(), renameFolderPath);
-    
     if (!fs.existsSync(absoluteRenameFolderPath)) {
       fs.mkdirSync(absoluteRenameFolderPath, { recursive: true });
     }
-    
     const newFilePath = path.join(absoluteRenameFolderPath, newFileName);
-    
     fs.copyFileSync(absoluteOriginalPath, newFilePath);
-
-    // Bypass the OS filechooser and set the file directly on the hidden input element
     await this.page.locator("input[type='file']").first().setInputFiles(newFilePath);
-    
     return newFileName;
   }
 
@@ -226,6 +215,18 @@ export class SourceFileLists extends BasePage {
 
   async uploadNewCashFileforPSSL(): Promise<string> {
     return await this.handleFileUpload('PSSLCashFile', 'PSSLF221_CashFile_20250228');
+  }
+  async uploadNewCashFileforPPIF(): Promise<string> {
+    return await this.handleFileUpload('PPIFCashFile', 'PennantPark Private Income Fund SPV LLC_Cash File_');
+  }
+  async uploadNewCashFileforPSSL_II_SPV(): Promise<string> {
+    return await this.handleFileUpload('PSSLIICashFile', 'PSSL II SPV LLC_Cash File_');
+  }
+  async uploadNewCashFileforPNNT(): Promise<string> {
+    return await this.handleFileUpload('PNNTCashFile', 'PNNT_SOI_01_31_2026.v02.17_LM_REVIEW_File_');
+  }
+  async uploadNewDailyFileforPNNT(): Promise<string> {
+    return await this.handleFileUpload('PNNTDailyFile', '01.31.26 PNNT Daily TB1_File_');
   }
 
   async clickLoadButton() {

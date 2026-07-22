@@ -23,12 +23,22 @@ test('Scenario: What-If Analysis PFLT Fund', async ({ landingPage }) => {
     await homePage.saveWIAData(fundName);
   });
 
-  test.only('Scenario: What-If Analysis PSSL Fund', async ({ landingPage }) => {
+  test('Scenario: What-If Analysis PSSL Fund', async ({ landingPage }) => {
     const fundName = "PSSL";
     const homePage = await landingPage.goTo();
     await homePage.clickViewResultBtn(fundName);
     await homePage.clickWhatIfAnalysisBtn();
     const wia_text = await homePage.updateValuesWIA("RCF_Commitment_Amount", fundName,'Portfolio');
+    expect(wia_text).toBeTruthy();
+    await homePage.saveWIAData(fundName);
+  });
+
+   test.only('Scenario: What-If Analysis PSLF Fund', async ({ landingPage }) => {
+    const fundName = "PSLF";
+    const homePage = await landingPage.goTo();
+    await homePage.clickViewResultBtn(fundName);
+    await homePage.clickWhatIfAnalysisBtn();
+    const wia_text = await homePage.updateValuesWIA("OutstandingAmount", fundName,'Loan List');
     expect(wia_text).toBeTruthy();
     await homePage.saveWIAData(fundName);
   });
