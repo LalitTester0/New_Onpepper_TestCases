@@ -32,7 +32,7 @@ export class DataIngestion extends BasePage {
     this.noDataCell = page.locator("//td[contains(text(),'No Data')]");
     this.sourceFiletab = page.locator("//div[text()='Source Files']");
     this.extractNewBaseDataBtn = page.getByText('+ Extract New Base Data',{exact:true});
-  }
+      }
 
   async selectSourceFileTab(): Promise<SourceFileLists> {
     await this.sourceFiletab.click();
