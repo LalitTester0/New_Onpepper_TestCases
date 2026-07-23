@@ -7,65 +7,23 @@ import * as path from 'path';
 export class SourceFileLists extends BasePage {
   readonly uploadFilesBtn: Locator;
   readonly reportDateField: Locator;
-  readonly pfltCheckbox: Locator;
-  readonly psslCheckbox: Locator;
-  readonly pcofCheckbox: Locator;
-  readonly dragAndDropField1: Locator;
   readonly loadBtn: Locator;
-  readonly getToastMsg: Locator;
-  readonly fileCheckbox: Locator;
-  readonly fileName: Locator;
-  readonly addToArchieveBtn: Locator;
-  readonly switcher: Locator;
-  readonly archievedfileNames: Locator;
-  readonly unArchieveBtn: Locator;
-  readonly archieveFileCheckbox: Locator;
-  readonly archivedFileName: Locator;
   readonly selectFundDropdown: Locator;
-  readonly pcofOption: Locator;
-  readonly pfltOption: Locator;
-  readonly psslOption: Locator;
-  readonly pfltFundTypeColumn: Locator;
   readonly reportDateColumn: Locator;
-  readonly pcofFundTypeColumn: Locator;
-  readonly psslFundTypeColumn: Locator;
   readonly reportDate: Locator;
   readonly navigatetoBaseDataButton: Locator;
   readonly exportBaseDataBtn: Locator;
-  readonly cancelBtn: Locator;
-  readonly noDataCell: Locator;
 
   constructor(page: Page) {
     super(page);
     this.uploadFilesBtn = page.locator("//span[contains(.,'+ Upload Files')]/parent::button");
     this.reportDateField = page.locator("//div[@class='ant-modal-body']//div[@class='ant-picker-input']//input[@placeholder='Report Date']");
-    this.pfltCheckbox = page.locator("//span[text()='PFLT']/preceding-sibling::span[contains(@class,'ant-checkbox')]");
-    this.psslCheckbox = page.locator("//span[text()='PSSL']/preceding-sibling::span[contains(@class,'ant-checkbox')]");
-    this.pcofCheckbox = page.locator("//span[text()='PCOF']/preceding-sibling::span[contains(@class,'ant-checkbox')]");
-    this.dragAndDropField1 = page.locator("//div[contains(@class,'_dropzone_')]");
     this.loadBtn = page.locator("//span[contains(text(),'Load')]/parent::button");
-    this.getToastMsg = page.locator("//div[contains(@class,'Toastify__toast-icon')]/following-sibling::div");
-    this.fileCheckbox = page.locator("(//th[.='Fund']/ancestor::table//tbody//td[.='Completed']/parent::tr//td[1]//input)[1]");
-    this.fileName = page.locator("(//th[.='Fund']/ancestor::table//tbody//td[.='Completed']/parent::tr//td[3])[1]");
-    this.addToArchieveBtn = page.locator("//span[contains(normalize-space(),'Add to Archives')]/parent::button");
-    this.switcher = page.locator("//button[@role='switch']");
-    this.archievedfileNames = page.locator("//th[.='File Name']/ancestor::table//tbody//td[3]");
-    this.unArchieveBtn = page.locator("//span[.='Unarchive']/parent::button");
-    this.archieveFileCheckbox = page.locator("(//th[.='Fund']/ancestor::table//tbody//td//input)[1]");
-    this.archivedFileName = page.locator("(//th[.='Fund']/ancestor::table//tbody//td[3])[1]");
     this.selectFundDropdown = page.locator("//span[@class='ant-select-selection-search']/parent::div");
-    this.pcofOption = page.locator("//div[@title='PCOF']");
-    this.pfltOption = page.locator("//div[@title='PFLT']");
-    this.psslOption = page.locator("//div[@title='PSSL']");
-    this.pfltFundTypeColumn = page.locator("//td[2]//span[text()='PFLT']");
     this.reportDateColumn = page.locator("//th[@title='Fund']/parent::tr/parent::thead/following-sibling::tbody//td[4]");
-    this.pcofFundTypeColumn = page.locator("//td[2]//span[text()='PCOF']");
-    this.psslFundTypeColumn = page.locator("//td[2]//span[text()='PSSL']");
     this.reportDate = page.locator("//input[@placeholder='Report Date']");
     this.navigatetoBaseDataButton = page.locator("//span[contains(text(),'<- Base Data')]/parent::button");
     this.exportBaseDataBtn = page.locator("//span[contains(text(),'Extract Base Data')]/parent::button");
-    this.cancelBtn = page.locator("//span[text()='Cancel']/parent::button");
-    this.noDataCell = page.locator("//td[contains(text(),'No Data')]");
   }
 
   async selectFilecheckbox(date: string, fileName: string): Promise<string> {
@@ -79,14 +37,6 @@ export class SourceFileLists extends BasePage {
     return await fnLocator.innerText();
   }
 
-  async noDataCellText(): Promise<string> {
-    return await this.noDataCell.innerText();
-  }
-
-  async clickCancelBtn() {
-    await this.cancelBtn.click();
-  }
-
   async navigateToBaseDataButtonAction(): Promise<DataIngestion> {
     await this.navigatetoBaseDataButton.click();
     return new DataIngestion(this.page);
@@ -94,33 +44,6 @@ export class SourceFileLists extends BasePage {
 
   async clickexportBaseDataBtn() {
     await this.exportBaseDataBtn.click();
-  }
-
-  async selectSourceFileforPFLT(): Promise<string> {
-    const date = this.uploadDate();
-    await this.filteredPFLTValue();
-    const fileNames: string[] = [];
-    fileNames.push(await this.selectFilecheckbox(date, "Master"));
-    fileNames.push(await this.selectFilecheckbox(date, "PENPL"));
-    fileNames.push(await this.selectFilecheckbox(date, "Market"));
-    await this.page.waitForTimeout(1000);
-    const cleanedNames = fileNames.map(f => f.replace(/\.\w+$/, ""));
-    const formattedString = cleanedNames.join("; ");
-    await this.clickexportBaseDataBtn();
-    return formattedString;
-  }
-
-  async selectSourceFileforPCOF(): Promise<string> {
-    const date = this.uploadDate();
-    await this.filteredPCOFValue();
-    const fileNames: string[] = [];
-    fileNames.push(await this.selectFilecheckbox(date, "Master"));
-    fileNames.push(await this.selectFilecheckbox(date, "PENPL"));
-    fileNames.push(await this.selectFilecheckbox(date, "Market"));
-    await this.page.waitForTimeout(1000);
-    const cleanedNames = fileNames.map(f => f.replace(/\.\w+$/, ""));
-    await this.clickexportBaseDataBtn();
-    return cleanedNames.join("; ");
   }
 
   uploadDate(): string {
@@ -137,21 +60,6 @@ export class SourceFileLists extends BasePage {
 
   async clickSelectFundDropdown() {
     await this.selectFundDropdown.click();
-  }
-
-  async filteredPCOFValue() {
-    await this.clickSelectFundDropdown();
-    await this.pcofOption.click();
-  }
-
-  async filteredPFLTValue() {
-    await this.clickSelectFundDropdown();
-    await this.pfltOption.click();
-  }
-
-  async filteredPSSLValue() {
-    await this.clickSelectFundDropdown();
-    await this.psslOption.click();
   }
 
   async clickUploadFilesBtn() {

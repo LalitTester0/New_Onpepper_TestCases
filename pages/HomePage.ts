@@ -99,6 +99,7 @@ export class HomePage extends BasePage {
   }
 
   async clickExportReportBtn() {
+    this.waitForElementAppear(this.exportReportBtn)
     await this.exportReportBtn.click();
   }
 
