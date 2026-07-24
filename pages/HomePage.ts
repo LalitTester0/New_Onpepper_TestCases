@@ -179,8 +179,7 @@ export class HomePage extends BasePage {
     await this.applyChangesBtn.click();
     await this.runBtn.hover();
     await this.runBtn.click();
-     const wiaText = this.page.locator('div').filter({ hasText: `Showing ${fundName} What-If Analysis Report for` }).first()
-    //this.page.locator(`//div[contains(text(),'Showing ${fundName} What-If Analysis Report for')]`);
+    const wiaText = this.page.locator('div').filter({ hasText: `Showing ${fundName} What-If Analysis Report for` }).first()
     await this.waitForElementAppear(wiaText);
     return await wiaText.isVisible();
   }

@@ -16,8 +16,6 @@ test.describe('Liquidity Management', () => {
     const subfund = "PFLT_Parent";
     const homePage = await landingPage.goTo();
     const liquid = await homePage.navigateToLiquidityManagement();
-    
-    // Instead of click_Fund_Checkbox (not implemented in LiquidityManagementPage.ts previously), we select it directly
     const checkbox = liquid.page.locator(`//span[normalize-space()='${subfund}']/preceding-sibling::span`);
     await checkbox.click();
     

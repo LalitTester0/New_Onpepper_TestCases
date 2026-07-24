@@ -1,44 +1,61 @@
 import { test, expect } from './fixtures/baseTest';
-import * as fs from 'fs';
 
+const funds = [
+  {
+    fundName: "PCOF",
+    columnName: "Investment_Cost",
+    sheetName: "PL BB Build",
+  },
+  {
+    fundName: "PFLT",
+    columnName: "Total_Commitment_(Issue_Currency)",
+    sheetName: "Loan List",
+  },
+  {
+    fundName: "PSSL",
+    columnName: "RCF_Commitment_Amount",
+    sheetName: "Portfolio",
+  },
+  {
+    fundName: "PSLF",
+    columnName: "OutstandingAmount",
+    sheetName: "Loan List",
+  },
+  {
+    fundName: "PSCF",
+    columnName: "(Local_Currency)_Current_Commitment_Amount",
+    sheetName: "Loan Tape",
+  },
+  {
+    fundName: "PPIF",
+    columnName: "(Local_Currency)_Current_Commitment_Amount",
+    sheetName: "Loan Tape",
+  },
+  {
+    fundName: "PSSL_II_SPV",
+    columnName: "Collateral_Obligation_Notional_Amount_(Local)",
+    sheetName: "Borrowing Base",
+  },
+  {
+    fundName: "PNNT",
+    columnName: "PNNT_Market_Value",
+    sheetName: "Loan Tape",
+  },
+];
 
-
-test('Scenario: What-If Analysis PCOF Fund', async ({ landingPage }) => {
-    const fundName = "PCOF";
-    const homePage = await landingPage.goTo();
-    await homePage.clickViewResultBtn(fundName);
-    await homePage.clickWhatIfAnalysisBtn();
-    const wia_text = await homePage.updateValuesWIA("Investment_Cost", fundName,'PL BB Build');
-    expect(wia_text).toBeTruthy();
-    await homePage.saveWIAData(fundName);
-  });
-
-test('Scenario: What-If Analysis PFLT Fund', async ({ landingPage }) => {
-    const fundName = "PFLT";
-    const homePage = await landingPage.goTo();
-    await homePage.clickViewResultBtn(fundName);
-    await homePage.clickWhatIfAnalysisBtn();
-    const wia_text = await homePage.updateValuesWIA("Total_Commitment_(Issue_Currency)", fundName,'Loan List');
-    expect(wia_text).toBeTruthy();
-    await homePage.saveWIAData(fundName);
-  });
-
-  test('Scenario: What-If Analysis PSSL Fund', async ({ landingPage }) => {
-    const fundName = "PSSL";
-    const homePage = await landingPage.goTo();
-    await homePage.clickViewResultBtn(fundName);
-    await homePage.clickWhatIfAnalysisBtn();
-    const wia_text = await homePage.updateValuesWIA("RCF_Commitment_Amount", fundName,'Portfolio');
-    expect(wia_text).toBeTruthy();
-    await homePage.saveWIAData(fundName);
-  });
-
-   test.only('Scenario: What-If Analysis PSLF Fund', async ({ landingPage }) => {
-    const fundName = "PSLF";
-    const homePage = await landingPage.goTo();
-    await homePage.clickViewResultBtn(fundName);
-    await homePage.clickWhatIfAnalysisBtn();
-    const wia_text = await homePage.updateValuesWIA("OutstandingAmount", fundName,'Loan List');
-    expect(wia_text).toBeTruthy();
-    await homePage.saveWIAData(fundName);
-  });
+test.describe("What-If Analysis", () => {
+  for (const item of funds) {
+    test(`Scenario: What-If Analysis ${item.fundName} Fund`, async ({ landingPage }) => {
+      const homePage = await landingPage.goTo();
+      await homePage.clickViewResultBtn(item.fundName);
+      await homePage.clickWhatIfAnalysisBtn();
+      const wiaText = await homePage.updateValuesWIA(
+        item.columnName,
+        item.fundName,
+        item.sheetName
+      );
+      expect(wiaText).toBeTruthy();
+      await homePage.saveWIAData(item.fundName);
+    });
+  }
+});
